@@ -4,19 +4,20 @@ import "./App.css";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 const QUESTION_COLORS = {
-  conceptual: { border: "#6C63FF", badge: "#6C63FF", label: "Conceptual" },
-  factual:    { border: "#00C9A7", badge: "#00C9A7", label: "Factual" },
-  application:{ border: "#F5A623", badge: "#F5A623", label: "Application" },
+  conceptual:  { border: "#6C63FF", badge: "#6C63FF", label: "Conceptual" },
+  factual:     { border: "#00C9A7", badge: "#00C9A7", label: "Factual" },
+  application: { border: "#F5A623", badge: "#F5A623", label: "Application" },
 };
 
 export default function App() {
-  const [file, setFile] = useState(null);
-  const [dragging, setDragging] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("questions");
+  const [file, setFile]               = useState(null);
+  const [dragging, setDragging]       = useState(false);
+  const [loading, setLoading]         = useState(false);
+  const [result, setResult]           = useState(null);
+  const [error, setError]             = useState("");
+  const [activeTab, setActiveTab]     = useState("questions");
   const [revealedHints, setRevealedHints] = useState({});
+  const [copied, setCopied]           = useState(false);
   const inputRef = useRef();
 
   const handleFile = (f) => {
@@ -38,7 +39,7 @@ export default function App() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch(`${API_URL}/analyze`, { method: "POST", body: formData });
+      const res  = await fetch(`${API_URL}/analyze`, { method: "POST", body: formData });
       const json = await res.json();
       if (!res.ok) throw new Error(json.detail || "Something went wrong");
       setResult(json.data);
@@ -59,11 +60,15 @@ export default function App() {
       .map((n) => `## ${n.topic}\n${n.points.map((p) => `• ${p}`).join("\n")}`)
       .join("\n\n");
     navigator.clipboard.writeText(text);
-    alert("Notes copied!");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
+
+  const reset = () => { setResult(null); setFile(null); setError(""); };
 
   return (
     <div className="app">
+      {/* ── HEADER ── */}
       <header className="header">
         <div className="logo">
           <span className="logo-icon">⚡</span>
@@ -73,6 +78,8 @@ export default function App() {
       </header>
 
       <main className="main">
+
+        {/* ── UPLOAD ── */}
         {!result && (
           <section className="upload-section">
             <div
@@ -82,9 +89,13 @@ export default function App() {
               onDragLeave={() => setDragging(false)}
               onClick={() => inputRef.current.click()}
             >
-              <input ref={inputRef} type="file" accept=".pdf"
+              <input
+                ref={inputRef}
+                type="file"
+                accept=".pdf"
                 style={{ display: "none" }}
-                onChange={(e) => handleFile(e.target.files[0])} />
+                onChange={(e) => handleFile(e.target.files[0])}
+              />
               {file ? (
                 <div className="file-info">
                   <span className="file-icon">📄</span>
@@ -92,18 +103,21 @@ export default function App() {
                   <span className="file-size">{(file.size / 1024).toFixed(1)} KB</span>
                 </div>
               ) : (
-                <div className="drop-content">
+                <>
                   <span className="drop-icon">☁️</span>
                   <p className="drop-title">Drop your PDF here</p>
-                  <p className="drop-sub">or click to browse</p>
-                </div>
+                  <p className="drop-sub">or click to browse files</p>
+                </>
               )}
             </div>
 
             {error && <p className="error-msg">⚠️ {error}</p>}
 
-            <button className={`analyze-btn ${loading ? "loading" : ""}`}
-              onClick={analyze} disabled={!file || loading}>
+            <button
+              className="analyze-btn"
+              onClick={analyze}
+              disabled={!file || loading}
+            >
               {loading ? (
                 <span className="btn-loading">
                   <span className="spinner" /> Analyzing PDF...
@@ -121,8 +135,11 @@ export default function App() {
           </section>
         )}
 
+        {/* ── RESULTS ── */}
         {result && (
           <section className="results">
+
+            {/* Summary */}
             <div className="summary-card">
               <span className="summary-icon">🎯</span>
               <div>
@@ -131,29 +148,40 @@ export default function App() {
               </div>
             </div>
 
+            {/* Tabs */}
             <div className="tabs">
-              {["questions", "notes", "terms"].map((tab) => (
-                <button key={tab}
-                  className={`tab ${activeTab === tab ? "active" : ""}`}
-                  onClick={() => setActiveTab(tab)}>
-                  {tab === "questions" && `❓ Questions (${result.questions.length})`}
-                  {tab === "notes" && `📚 Study Notes`}
-                  {tab === "terms" && `🔑 Key Terms`}
+              {[
+                { key: "questions", label: `❓ Questions (${result.questions?.length ?? 0})` },
+                { key: "notes",     label: "📚 Study Notes" },
+                { key: "terms",     label: "🔑 Key Terms" },
+              ].map(({ key, label }) => (
+                <button
+                  key={key}
+                  className={`tab ${activeTab === key ? "active" : ""}`}
+                  onClick={() => setActiveTab(key)}
+                >
+                  {label}
                 </button>
               ))}
             </div>
 
+            {/* Questions */}
             {activeTab === "questions" && (
               <div className="tab-content">
-                {result.questions.map((q) => {
-                  const color = QUESTION_COLORS[q.type] || QUESTION_COLORS.conceptual;
+                {result.questions?.map((q) => {
+                  const color = QUESTION_COLORS[q.type] ?? QUESTION_COLORS.conceptual;
                   return (
-                    <div key={q.id} className="question-card"
-                      style={{ borderLeft: `4px solid ${color.border}` }}>
+                    <div
+                      key={q.id}
+                      className="question-card"
+                      style={{ borderLeftColor: color.border }}
+                    >
                       <div className="q-header">
                         <span className="q-num">Q{q.id}</span>
-                        <span className="q-badge"
-                          style={{ background: color.badge + "33", color: color.badge }}>
+                        <span
+                          className="q-badge"
+                          style={{ background: color.badge + "28", color: color.badge }}
+                        >
                           {color.label}
                         </span>
                       </div>
@@ -170,14 +198,17 @@ export default function App() {
               </div>
             )}
 
+            {/* Notes */}
             {activeTab === "notes" && (
               <div className="tab-content">
-                <button className="copy-btn" onClick={copyNotes}>📋 Copy All Notes</button>
-                {result.notes.map((n, i) => (
+                <button className="copy-btn" onClick={copyNotes}>
+                  {copied ? "✅ Copied!" : "📋 Copy All Notes"}
+                </button>
+                {result.notes?.map((n, i) => (
                   <div key={i} className="note-card">
                     <h3 className="note-topic">{n.topic}</h3>
                     <ul className="note-list">
-                      {n.points.map((p, j) => (
+                      {n.points?.map((p, j) => (
                         <li key={j} className="note-point">{p}</li>
                       ))}
                     </ul>
@@ -186,9 +217,10 @@ export default function App() {
               </div>
             )}
 
+            {/* Terms */}
             {activeTab === "terms" && (
               <div className="tab-content terms-grid">
-                {result.key_terms.map((t, i) => (
+                {result.key_terms?.map((t, i) => (
                   <div key={i} className="term-card">
                     <p className="term-word">{t.term}</p>
                     <p className="term-def">{t.definition}</p>
@@ -197,8 +229,7 @@ export default function App() {
               </div>
             )}
 
-            <button className="reset-btn"
-              onClick={() => { setResult(null); setFile(null); }}>
+            <button className="reset-btn" onClick={reset}>
               ↩ Analyze Another PDF
             </button>
           </section>
@@ -206,7 +237,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        Built with ❤️ using React + FastAPI + Google Gemini
+        Built with ❤️ using React + FastAPI + Groq AI
       </footer>
     </div>
   );

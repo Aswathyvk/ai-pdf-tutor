@@ -1,11 +1,11 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import pdfplumber
-import google.generativeai as genai
+from groq import Groq
 from dotenv import load_dotenv
+import pdfplumber
 import os, io, json
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = FastAPI(title="AI PDF Tutor API")
 
@@ -17,8 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def extract_text(file_bytes: bytes) -> str:
     text = ""
@@ -29,12 +28,11 @@ def extract_text(file_bytes: bytes) -> str:
                 text += t + "\n"
     return text.strip()
 
-def analyze_with_gemini(text: str) -> dict:
-    prompt = f"""
-You are an expert AI tutor. Analyze this PDF and respond ONLY with valid JSON.
+def analyze_with_groq(text: str) -> dict:
+    prompt = f"""You are an expert AI tutor. Analyze this PDF and respond ONLY with valid JSON, no extra text.
 
 PDF CONTENT:
-{text[:8000]}
+{text[:4000]}
 
 Return this exact JSON:
 {{
@@ -47,9 +45,7 @@ Return this exact JSON:
     {{"id": 5, "question": "...", "type": "factual", "answer_hint": "..."}},
     {{"id": 6, "question": "...", "type": "application", "answer_hint": "..."}},
     {{"id": 7, "question": "...", "type": "conceptual", "answer_hint": "..."}},
-    {{"id": 8, "question": "...", "type": "factual", "answer_hint": "..."}},
-    {{"id": 9, "question": "...", "type": "application", "answer_hint": "..."}},
-    {{"id": 10, "question": "...", "type": "conceptual", "answer_hint": "..."}}
+    {{"id": 8, "question": "...", "type": "factual", "answer_hint": "..."}}
   ],
   "notes": [
     {{"topic": "Topic Title", "points": ["point 1", "point 2", "point 3"]}},
@@ -63,10 +59,14 @@ Return this exact JSON:
     {{"term": "Term", "definition": "definition"}},
     {{"term": "Term", "definition": "definition"}}
   ]
-}}
-"""
-    response = model.generate_content(prompt)
-    raw = response.text.strip()
+}}"""
+
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=2000,
+    )
+    raw = response.choices[0].message.content.strip()
     if "```" in raw:
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -92,7 +92,7 @@ async def analyze_pdf(file: UploadFile = File(...)):
     if len(pdf_text) < 100:
         raise HTTPException(status_code=400, detail="PDF has too little text.")
     try:
-        result = analyze_with_gemini(pdf_text)
+        result = analyze_with_groq(pdf_text)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
     return {"status": "success", "filename": file.filename, "data": result}
