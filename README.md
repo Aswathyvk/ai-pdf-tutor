@@ -1,4 +1,4 @@
-﻿# ⚡ StudyAI — AI PDF Tutor
+# ⚡ StudyAI — AI PDF Tutor
 
 > Turn any PDF into a complete study guide using AI!
 
@@ -6,7 +6,16 @@
 ![Python](https://img.shields.io/badge/Python-3.10+-FFD700?style=for-the-badge&logo=python&logoColor=black)
 ![React](https://img.shields.io/badge/React-18-FFD700?style=for-the-badge&logo=react&logoColor=black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-FFD700?style=for-the-badge&logo=fastapi&logoColor=black)
-![Groq AI](https://img.shields.io/badge/Groq_AI-Free-FFD700?style=for-the-badge&logoColor=black)
+![Groq AI](https://img.shields.io/badge/Groq_AI-LLaMA3-FFD700?style=for-the-badge&logoColor=black)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-FFD700?style=for-the-badge&logo=vercel&logoColor=black)
+
+---
+
+## 🌐 Live Demo
+
+🔗 **Frontend:** https://ai-pdf-tutor-seven.vercel.app
+
+🔗 **Backend API:** https://ai-pdf-tutor-backend.onrender.com
 
 ---
 
@@ -21,6 +30,14 @@
 
 ---
 
+## 🖼️ Screenshots
+
+| Upload PDF | AI Results |
+|------------|-----------|
+| Drop any PDF | Questions + Notes + Key Terms generated in 15-20 seconds |
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -30,6 +47,8 @@
 | AI Model | Groq AI (llama-3.3-70b-versatile) |
 | PDF Reading | pdfplumber |
 | Styling | Custom CSS with animations |
+| Backend Hosting | Render.com (Free) |
+| Frontend Hosting | Vercel (Free) |
 
 ---
 
@@ -38,32 +57,30 @@
 ```
 ai-pdf-tutor/
 ├── backend/
-│   ├── main.py              # FastAPI backend
-│   ├── .env                 # API keys (never push this!)
-│   └── requirements.txt     # Python dependencies
+│   ├── main.py              # FastAPI backend + Groq AI
+│   ├── requirements.txt     # Python dependencies
+│   └── .env                 # API keys (never push!)
 ├── frontend/
 │   ├── src/
 │   │   ├── App.jsx          # Main React component
-│   │   ├── App.css          # Beautiful styles
+│   │   ├── App.css          # Animations + styling
 │   │   └── index.css        # Global styles
-│   └── package.json
+│   ├── package.json
+│   └── vite.config.js
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Run Locally
 
 ### Prerequisites
 - Python 3.10+
 - Node.js 18+
-- Git
 - Free Groq API key from [console.groq.com](https://console.groq.com)
 
----
-
-### 1️⃣ Clone the Repository
+### 1️⃣ Clone the repo
 
 ```bash
 git clone https://github.com/Aswathyvk/ai-pdf-tutor.git
@@ -79,9 +96,9 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Create `.env` file inside backend folder:
+Create `.env` file:
 ```
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_groq_key_here
 ```
 
 Run backend:
@@ -89,48 +106,39 @@ Run backend:
 uvicorn main:app --reload --port 8001
 ```
 
-✅ Backend runs at: http://127.0.0.1:8001
-
----
+✅ Backend: http://127.0.0.1:8001
 
 ### 3️⃣ Setup Frontend
 
-Open a new terminal:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-✅ Frontend runs at: http://localhost:5173
+✅ Frontend: http://localhost:5173
 
 ---
 
-### 4️⃣ Use the App
+## 📦 Backend Dependencies
 
-1. Open http://localhost:5173
-2. Upload any PDF file
-3. Click **✨ Generate Study Guide**
-4. Wait 15-20 seconds
-5. Get your AI-generated study guide! 🎉
-
----
-
-## 📦 Install Backend Dependencies
-
-```bash
-pip install fastapi uvicorn python-dotenv groq pdfplumber python-multipart
+```
+fastapi
+uvicorn
+python-dotenv
+groq
+pdfplumber
+python-multipart
 ```
 
 ---
 
 ## 🔑 Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `GROQ_API_KEY` | Your free Groq API key |
-
-Get your free key at: https://console.groq.com/keys
+| Variable | Where | Description |
+|----------|-------|-------------|
+| `GROQ_API_KEY` | backend/.env | Free Groq API key |
+| `VITE_API_URL` | Vercel settings | Backend URL on Render |
 
 ---
 
@@ -140,10 +148,12 @@ Get your free key at: https://console.groq.com/keys
 - ✅ Drag and drop PDF upload
 - ✅ Smooth CSS animations
 - ✅ Yellow accent color theme
-- ✅ Responsive mobile friendly design
+- ✅ Responsive mobile friendly
 - ✅ Copy notes to clipboard
-- ✅ Show/Hide answer hints
-- ✅ Tab based navigation (Questions / Notes / Key Terms)
+- ✅ Show / Hide answer hints
+- ✅ Tab navigation (Questions / Notes / Key Terms)
+- ✅ Loading steps animation
+- ✅ Fully deployed and live
 
 ---
 
@@ -151,41 +161,44 @@ Get your free key at: https://console.groq.com/keys
 
 | Day | What was built |
 |-----|---------------|
-| Day 1 | Project setup, FastAPI backend, React frontend, GitHub push |
+| Day 1 | Project setup, FastAPI backend, React frontend, GitHub |
 | Day 2 | Switched to Groq AI, beautiful animated UI, yellow theme |
+| Day 3 | Deployed backend on Render, frontend on Vercel — fully live! |
 
 ---
 
-## 💡 Bonus Feature Ideas
+## 💡 Future Features
 
 - 🧠 Quiz mode with scoring
 - 🌙 Dark / Light theme toggle
 - 📥 Download notes as PDF
 - 💬 Chat with PDF
 - 🌐 Multi-language support
+- 📊 Topic-wise breakdown
 
 ---
 
-## ⚠️ Important Notes
+## ⚠️ Important
 
-- Never push your `.env` file to GitHub
-- The `venv/` folder is excluded from Git
-- Keep your API key private and secret
-- PDF size under 5MB works best
+- Never push `.env` file to GitHub
+- `venv/` and `node_modules/` are excluded via `.gitignore`
+- Free Render backend may take 50 seconds to wake up on first request
 
 ---
 
 ## 👩‍💻 Author
 
-**Aswathy VK**
-- GitHub: [@Aswathyvk](https://github.com/Aswathyvk)
-- Project Link: [github.com/Aswathyvk/ai-pdf-tutor](https://github.com/Aswathyvk/ai-pdf-tutor)
+**Aswathy VK** — MCA Student
+
+- 🐙 GitHub: [@Aswathyvk](https://github.com/Aswathyvk)
+- 💼 Project: [ai-pdf-tutor](https://github.com/Aswathyvk/ai-pdf-tutor)
+- 🌐 Live App: [ai-pdf-tutor-seven.vercel.app](https://ai-pdf-tutor-seven.vercel.app)
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source under the [MIT License](LICENSE).
 
 ---
 
@@ -194,5 +207,7 @@ This project is open source and available under the [MIT License](LICENSE).
 Built with ❤️ using React + FastAPI + Groq AI
 
 ⭐ Star this repo if you found it helpful!
+
+🔗 [Live Demo](https://ai-pdf-tutor-seven.vercel.app) • [GitHub](https://github.com/Aswathyvk/ai-pdf-tutor)
 
 </div>
