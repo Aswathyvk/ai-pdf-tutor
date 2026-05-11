@@ -72,7 +72,7 @@ export default function App() {
       <header className="header">
         <div className="logo">
           <span className="logo-icon">⚡</span>
-          <span className="logo-text">StudyAI</span>
+          <span className="logo-text">AI  TUTOR</span>
         </div>
         <p className="logo-sub">Turn any PDF into a complete study guide</p>
       </header>

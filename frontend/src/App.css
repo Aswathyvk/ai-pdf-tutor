@@ -218,7 +218,7 @@
   width: 100%;
   max-width: 360px;
   padding: 1.1rem 2rem;
-  background: linear-gradient(135deg, #6C63FF, #8B5CF6, #6C63FF);
+  background: linear-gradient(135deg, #86dcaa, #21703c, #0c5a24);
   background-size: 200% auto;
   color: white;
   border: none;
@@ -301,7 +301,7 @@
 
 .summary-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px #6C63FF28;
+  box-shadow: 0 8px 32px #a09fae28;
 }
 
 .summary-icon { font-size: 2rem; flex-shrink: 0; }
@@ -348,7 +348,7 @@
 .tab:hover:not(.active) { color: var(--text); background: #ffffff08; }
 
 .tab.active {
-  background: linear-gradient(135deg, #6C63FF22, #00C9A712);
+  background: linear-gradient(135deg, #d2d2d7e5, #2c9583b5);
   color: var(--text);
   font-weight: 700;
   border: 1px solid #6C63FF40;
@@ -443,7 +443,7 @@
   padding: 0.9rem 1.1rem;
   font-size: 0.88rem;
   line-height: 1.65;
-  color: #a89fff;
+  color: #2b227e;
   animation: fadeUp 0.25s ease;
 }
 
@@ -479,15 +479,15 @@
 
 .note-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px #00C9A715;
-  border-color: #00C9A730;
+  box-shadow: 0 6px 24px #9ccec5c0;
+  border-color: #239b875b;
 }
 
 .note-topic {
   font-family: 'Syne', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--accent2);
+  color: #ffffff;
   margin-bottom: 0.9rem;
   padding-bottom: 0.6rem;
   border-bottom: 1px solid var(--border);
